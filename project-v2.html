@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A film project by Tommy Percival." />
+    <title>Project — Tommy Percival</title>
+    <link rel="stylesheet" href="style-pro.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="back" href="index.html#work">← Back to work</a>
+      <a class="brand" href="index.html">Tommy Percival</a>
+      <a class="watch" id="topWatch" target="_blank" rel="noopener"
+        >YouTube ↗</a
+      >
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="menuPanel"
+      >
+        <span class="menu-icon" aria-hidden="true"></span>
+      </button>
+    </header>
+
+    <nav class="menu-panel" id="menuPanel" aria-label="Site navigation">
+      <a href="index.html#work">Work</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+
+    <main>
+      <section class="hero" aria-label="Project film">
+        <div class="film" id="filmFrame">
+          <iframe
+            id="embed"
+            title="Project film"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+              web-share;
+            "
+            allowfullscreen
+          ></iframe>
+          <a class="film-cover" id="filmCover" target="_blank" rel="noopener"
+            ><img id="coverImage" width="1920" height="1080" alt="" /><span
+              class="play"
+              >Watch film</span
+            ></a
+          >
+        </div>
+      </section>
+
+      <section class="project-main">
+        <div class="heading">
+          <h1 id="title">Project</h1>
+          <div class="meta">
+            <p class="eyebrow">Role</p>
+            <p id="meta"></p>
+          </div>
+        </div>
+        <div class="description">
+          <h2>About the film</h2>
+          <div class="copy" id="description"></div>
+        </div>
+      </section>
+
+      <section class="gallery" id="gallerySection">
+        <div class="gallery-head">
+          <h2>Film stills</h2>
+          <span class="eyebrow">Selected frames</span>
+        </div>
+        <div class="gallery-grid" id="gallery"></div>
+      </section>
+
+      <a class="next" id="nextProject"
+        ><div><small>Next project</small><strong id="nextTitle"></strong></div>
+        <span class="arrow">→</span></a
+      >
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>
