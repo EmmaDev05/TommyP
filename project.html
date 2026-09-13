@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A film project by Tommy Percival.">
+  <title>Project — Tommy Percival</title>
+  <style>
+    :root {
+      --ink: #10110f;
+      --paper: #e9e7df;
+      --soft: #aaa9a2;
+      --accent: #bd5f40;
+      --white: #f5f3ec;
+      --pad: clamp(20px, 3.2vw, 52px);
+      --rule: rgba(255, 255, 255, .24);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    body.menu-open { overflow: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button { color: inherit; font: inherit; }
+    img, iframe { display: block; width: 100%; height: 100%; }
+    img { object-fit: cover; }
+    figure { margin: 0; }
+    :focus-visible { outline: 3px solid #f5b077; outline-offset: 4px; }
+
+    .top {
+      position: relative;
+      z-index: 4;
+      height: 76px;
+      padding: 0 var(--pad);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      border-bottom: 1px solid var(--rule);
+    }
+    .back,
+    .brand,
+    .watch,
+    .eyebrow {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .brand { font-size: 12px; font-weight: 700; }
+    .watch { justify-self: end; margin-right: 58px; }
+
+    .menu-toggle {
+      position: fixed;
+      z-index: 22;
+      top: 20px;
+      right: var(--pad);
+      display: block;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, .5);
+      background: rgba(12, 13, 11, .54);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+    }
+    .menu-icon {
+      position: relative;
+      width: 18px;
+      height: 11px;
+      display: block;
+      border-top: 1px solid currentColor;
+      border-bottom: 1px solid currentColor;
+    }
+    .menu-open .menu-toggle {
+      color: var(--ink);
+      border-color: #b7b5ab;
+      background: rgba(233, 231, 223, .9);
+    }
+    .menu-open .menu-icon { border-color: transparent; }
+    .menu-open .menu-icon::before,
+    .menu-open .menu-icon::after {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 0;
+      width: 18px;
+      border-top: 1px solid currentColor;
+      transform: rotate(45deg);
+    }
+    .menu-open .menu-icon::after { transform: rotate(-45deg); }
+    .menu-panel {
+      position: fixed;
+      z-index: 18;
+      inset: 0;
+      padding: clamp(100px, 12vw, 150px) var(--pad) 34px;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: var(--paper);
+      color: var(--ink);
+    }
+    .menu-open .menu-panel { display: flex; }
+    .menu-panel a {
+      padding: 8px 0;
+      font-size: clamp(62px, 11vw, 160px);
+      font-weight: 500;
+      line-height: .92;
+      letter-spacing: -.065em;
+      border-bottom: 1px solid #b7b5ab;
+    }
+
+    .hero { padding: clamp(18px, 3vw, 42px) var(--pad) 0; }
+    .film {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      background: #242520;
+    }
+    .film iframe {
+      display: none;
+      border: 0;
+    }
+    .film.is-playing iframe { display: block; }
+    .film-cover { position: absolute; inset: 0; }
+    .film-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, .02) 45%, rgba(0, 0, 0, .52));
+      transition: background .35s ease;
+    }
+    .film-cover:hover::after { background: linear-gradient(180deg, rgba(0, 0, 0, .08) 35%, rgba(0, 0, 0, .64)); }
+    .play {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      width: clamp(82px, 9vw, 132px);
+      height: clamp(82px, 9vw, 132px);
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(245, 243, 236, .94);
+      color: var(--ink);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      transform: translate(-50%, -50%);
+    }
+
+    .project-main { padding: clamp(58px, 8vw, 112px) var(--pad) clamp(100px, 13vw, 180px); }
+    .heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(240px, .6fr);
+      align-items: start;
+      gap: 7vw;
+    }
+    .heading h1 {
+      max-width: 1120px;
+      margin: 0;
+      font-size: clamp(58px, 10vw, 154px);
+      font-weight: 500;
+      line-height: .78;
+      letter-spacing: -.072em;
+      overflow-wrap: anywhere;
+    }
+    .meta { padding-top: 7px; }
+    .eyebrow { margin: 0 0 16px; color: var(--soft); }
+    .meta p:last-child { margin: 0; font-size: 15px; line-height: 1.55; }
+    .description {
+      display: grid;
+      grid-template-columns: minmax(200px, .55fr) minmax(0, 1.45fr);
+      gap: 7vw;
+      margin-top: clamp(76px, 10vw, 152px);
+      padding-top: 22px;
+      border-top: 1px solid var(--rule);
+    }
+    .description h2 {
+      margin: 0;
+      font-size: clamp(25px, 3vw, 43px);
+      font-weight: 500;
+      letter-spacing: -.045em;
+    }
+    .copy { max-width: 880px; font-size: clamp(16px, 1.5vw, 21px); line-height: 1.65; }
+    .copy p { margin: 0 0 1.4em; }
+
+    .gallery { padding: 0 var(--pad) clamp(100px, 13vw, 180px); }
+    .gallery[hidden] { display: none; }
+    .gallery-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 30px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .gallery h2 {
+      margin: 0;
+      font-size: clamp(32px, 4.6vw, 68px);
+      font-weight: 500;
+      letter-spacing: -.052em;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: clamp(12px, 2vw, 28px);
+    }
+    .still { overflow: hidden; aspect-ratio: 16 / 10; background: #242520; }
+    .still:first-child { grid-row: span 2; aspect-ratio: auto; }
+    .still img { transition: transform .65s cubic-bezier(.22, .72, .18, 1); }
+    .still:hover img { transform: scale(1.018); }
+
+    .next {
+      padding: clamp(66px, 9vw, 122px) var(--pad);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      background: var(--accent);
+      color: var(--white);
+    }
+    .next small {
+      display: block;
+      margin-bottom: 20px;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .next strong {
+      display: block;
+      font-size: clamp(48px, 8vw, 120px);
+      font-weight: 500;
+      line-height: .82;
+      letter-spacing: -.065em;
+    }
+    .arrow { font-size: clamp(50px, 7vw, 100px); }
+
+    @media (max-width: 800px) {
+      .top { height: 66px; grid-template-columns: 1fr auto; }
+      .brand { display: none; }
+      .watch { margin-right: 58px; }
+      .menu-toggle { top: 14px; }
+      .menu-panel a { font-size: clamp(54px, 17vw, 92px); }
+      .heading,
+      .description { grid-template-columns: 1fr; }
+      .heading { gap: 36px; }
+      .description { gap: 35px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .still:first-child { grid-row: auto; aspect-ratio: 16 / 10; }
+    }
+
+    @media (max-width: 480px) {
+      .watch { display: none; }
+      .film { aspect-ratio: 4 / 3; }
+      .film-cover img { object-position: center; }
+      .gallery-head { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .still img,
+      .film-cover::after { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="back" href="index-v2.html#work">← Back to work</a>
+    <a class="brand" href="index-v2.html">Tommy Percival</a>
+    <a class="watch" id="topWatch" target="_blank" rel="noopener">YouTube ↗</a>
+    <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel"><span class="menu-icon" aria-hidden="true"></span></button>
+  </header>
+
+  <nav class="menu-panel" id="menuPanel" aria-label="Site navigation">
+    <a href="index-v2.html#work">Work</a>
+    <a href="index-v2.html#about">About</a>
+    <a href="index-v2.html#contact">Contact</a>
+  </nav>
+
+  <main>
+    <section class="hero" aria-label="Project film">
+      <div class="film" id="filmFrame">
+        <iframe id="embed" title="Project film" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <a class="film-cover" id="filmCover" target="_blank" rel="noopener"><img id="coverImage" width="1920" height="1080" alt=""><span class="play">Watch film</span></a>
+      </div>
+    </section>
+
+    <section class="project-main">
+      <div class="heading">
+        <h1 id="title">Project</h1>
+        <div class="meta"><p class="eyebrow">Role</p><p id="meta"></p></div>
+      </div>
+      <div class="description"><h2>About the film</h2><div class="copy" id="description"></div></div>
+    </section>
+
+    <section class="gallery" id="gallerySection">
+      <div class="gallery-head"><h2>Film stills</h2><span class="eyebrow">Selected frames</span></div>
+      <div class="gallery-grid" id="gallery"></div>
+    </section>
+
+    <a class="next" id="nextProject"><div><small>Next project</small><strong id="nextTitle"></strong></div><span class="arrow">→</span></a>
+  </main>
+
+  <script>
+    const projects = [
+      {
+        title: 'Case Closed',
+        video: '4qyvEshhr_c',
+        embed: false,
+        meta: 'Editor · Script Supervisor · Colourist',
+        cover: 'assets/projects/case-closed/cover.webp',
+        stills: ['assets/projects/case-closed/01.webp', 'assets/projects/case-closed/02.webp', 'assets/projects/case-closed/03.webp', 'assets/projects/case-closed/04.webp', 'assets/projects/case-closed/05.webp', 'assets/projects/case-closed/06.webp'],
+        description: [
+          `After getting pulled over whilst attempting to drive her sick child to the hospital over the prescribed alcohol limit, <em>Case Closed</em> follows the court case of Miss Carter as she attempts to defend her actions in Court.`,
+          `<em>Case Closed</em> was my final group project in my second year of university. I was involved from the beginning, including planning the film, helping on set and working as script supervisor. I then organised the footage and shaped the final narrative through multiple edits, refining the pacing so the case remained engaging and clear.`
+        ]
+      },
+      {
+        title: 'East Side United',
+        video: '1VVqRA-g0WE',
+        embed: true,
+        meta: 'Editor · Documentary',
+        cover: 'https://img.youtube.com/vi/mVY7qHK5xIU/maxresdefault.jpg',
+        stills: ['assets/projects/east-side-united/01.webp', 'assets/projects/east-side-united/02.webp', 'assets/projects/east-side-united/03.webp', 'assets/projects/east-side-united/04.webp', 'assets/projects/east-side-united/05.webp', 'assets/projects/east-side-united/06.webp'],
+        description: [
+          `I joined the project to help create a documentary for a new non-league football club. Using footage from the club's first trial day and an interview with its owner, I was given free rein to find and shape the narrative.`,
+          `The finished film introduces the owner, the club's ambitions and his perspective on the trial day. It is a project I am particularly proud of because the story was built independently from many hours of footage.`
+        ]
+      },
+      {
+        title: 'Overtime',
+        video: 'KPPga38YHgo',
+        embed: true,
+        meta: 'Editor · Short film',
+        cover: 'https://img.youtube.com/vi/KPPga38YHgo/maxresdefault.jpg',
+        stills: [],
+        description: [
+          `This project formed part of my second-year Editing and Colour Grading module. I was asked to edit a section of the existing short film <em>Overtime</em>, working from the original footage, audio and script.`,
+          `The main objectives were to create an organised project structure and create tension through pacing and carefully judged editorial choices.`
+        ]
+      },
+      {
+        title: 'Cinema Cult',
+        video: 'a68FI5fNgl4',
+        embed: false,
+        meta: 'Editor · Documentary',
+        cover: 'assets/projects/cinema-cult/01.webp',
+        stills: ['assets/projects/cinema-cult/01.webp', 'assets/projects/cinema-cult/02.webp', 'assets/projects/cinema-cult/03.webp', 'assets/projects/cinema-cult/04.webp', 'assets/projects/cinema-cult/05.webp', 'assets/projects/cinema-cult/06.webp'],
+        description: [
+          `<em>Cinema Cult</em> was a second-year group documentary investigating independent cinema. We interviewed people working in the industry, including the owner of an independent cinema, and gathered a large amount of original and archival B-roll.`,
+          `The director and I developed the narrative after filming, and I shaped it through several drafts until we reached the final cut.`
+        ]
+      },
+      {
+        title: 'Colour Grading Assignment',
+        video: 'E058OlFr4uE',
+        embed: true,
+        meta: 'Colourist · DaVinci Resolve',
+        cover: 'assets/projects/colour-grading-assignment/cover.webp',
+        stills: ['assets/projects/colour-grading-assignment/01.webp', 'assets/projects/colour-grading-assignment/02.webp', 'assets/projects/colour-grading-assignment/03.webp', 'assets/projects/colour-grading-assignment/04.webp'],
+        description: [
+          `For this second-year Editing and Colour Grading assignment, I graded a recreation of a scene from <em>Nightcrawler</em>. I was responsible for the colour grading only and did not edit the piece.`,
+          `The project strengthened my understanding of the detailed colour-grading process and developed my confidence working in DaVinci Resolve.`
+        ]
+      },
+      {
+        title: 'Reflections in Transit',
+        video: 'uAryPcljRI0',
+        embed: true,
+        meta: 'Editor · Short film',
+        cover: 'assets/hero/reflections-jellyfish.webp',
+        stills: ['assets/projects/reflections-in-transit/01.webp', 'assets/projects/reflections-in-transit/02.webp', 'assets/projects/reflections-in-transit/03.webp', 'assets/projects/reflections-in-transit/04.webp', 'assets/projects/reflections-in-transit/05.webp', 'assets/projects/reflections-in-transit/06.webp'],
+        description: [
+          `After two girls with contrasting personalities swap bags, <em>Reflections in Transit</em> follows their very different attempts to get them back and what each learns in the process.`,
+          `This first-year group project was one of the first short films I edited. It represents an important stage in my development and shows how far my filmmaking and editing skills have progressed.`
+        ]
+      }
+    ];
+
+    const params = new URLSearchParams(location.search);
+    const requested = params.get('title');
+    const index = Math.max(0, projects.findIndex(item => item.title === requested));
+    const project = projects[index];
+    const next = projects[(index + 1) % projects.length];
+    const watchUrl = `https://youtu.be/${project.video}`;
+
+    document.title = `${project.title} — Tommy Percival`;
+    document.querySelector('#title').textContent = project.title;
+    document.querySelector('#meta').textContent = project.meta;
+    document.querySelector('#description').innerHTML = project.description.map(item => `<p>${item}</p>`).join('');
+    document.querySelector('#topWatch').href = watchUrl;
+
+    const filmFrame = document.querySelector('#filmFrame');
+    const filmCover = document.querySelector('#filmCover');
+    const coverImage = document.querySelector('#coverImage');
+    const embed = document.querySelector('#embed');
+    filmCover.href = watchUrl;
+    coverImage.src = project.cover;
+    coverImage.alt = `Still from ${project.title}`;
+
+    if (project.embed && location.protocol !== 'file:') {
+      filmCover.addEventListener('click', event => {
+        event.preventDefault();
+        embed.src = `https://www.youtube.com/embed/${project.video}?autoplay=1&rel=0`;
+        filmCover.hidden = true;
+        filmFrame.classList.add('is-playing');
+      });
+    }
+
+    const gallerySection = document.querySelector('#gallerySection');
+    const gallery = document.querySelector('#gallery');
+    if (project.stills.length) {
+      gallery.innerHTML = project.stills.map((source, stillIndex) => `<figure class="still"><img src="${source}" width="1920" height="1080" loading="lazy" alt="Still ${stillIndex + 1} from ${project.title}"></figure>`).join('');
+    } else {
+      gallerySection.hidden = true;
+    }
+
+    document.querySelector('#nextTitle').textContent = next.title;
+    document.querySelector('#nextProject').href = `project-v2.html?title=${encodeURIComponent(next.title)}`;
+
+    const body = document.body;
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menuLinks = document.querySelectorAll('.menu-panel a');
+    menuToggle.addEventListener('click', () => {
+      const isOpen = body.classList.toggle('menu-open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+    });
+    menuLinks.forEach(link => link.addEventListener('click', () => {
+      body.classList.remove('menu-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Open menu');
+    }));
+  </script>
+</body>
+</html>
